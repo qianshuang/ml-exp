@@ -24,7 +24,6 @@ def stopwords_list(filename):
                 stopwords.append(content)
             except:
                 pass
-    print("load stopwords finished...")
     return stopwords
 
 
@@ -60,7 +59,6 @@ def build_vocab(total_dir, vocab_dir):
                 # words.extend(number_norm(sent))
                 words.extend(sent)
     words = remove_stopwords(words)
-    print("remove stopwords finished...")
     # counter = Counter(words)
     # count_pairs = counter.most_common(5000)
     # words, _ = list(zip(*count_pairs))
@@ -69,6 +67,7 @@ def build_vocab(total_dir, vocab_dir):
 
 def read_vocab(vocab_dir):
     """读取词汇表"""
+    print("read_vocab...")
     words = open_file(vocab_dir).read().strip().split('\n')
     word_to_id = dict(zip(words, range(0, len(words))))
 
@@ -77,6 +76,7 @@ def read_vocab(vocab_dir):
 
 def read_category():
     """读取所有类别"""
+    print("read_category...")
     # categories = ['体育', '财经', '房产', '家居', '教育', '科技', '时尚', '时政', '游戏', '娱乐']
     cat_set = set()
     with open_file(test_dir) as f:

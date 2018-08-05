@@ -11,14 +11,20 @@ vocab_dir = os.path.join(base_dir, 'cnews.vocab.txt')
 
 
 def train():
+    print("start training...")
     # 处理训练数据
     train_feature, train_target = process_file(train_dir, word_to_id, cat_to_id)
+    # 模型训练
     model.fit(train_feature, train_target)
 
 
 def test():
+    print("start testing...")
+    # 处理测试数据
     test_feature, test_target = process_file(test_dir, word_to_id, cat_to_id)
-    test_predict = model.predict(test_feature)
+    # test_predict = model.predict(test_feature)  # 返回预测类别
+    test_predict_proba = model.predict_proba(test_feature)    # 返回属于各个类别的概率
+    test_predict = np.argmax(test_predict_proba, 1)  # 返回概率最大的类别标签
 
     # accuracy
     true_false = (test_predict == test_target)
@@ -35,7 +41,8 @@ def test():
     print(metrics.confusion_matrix(test_target, test_predict))
 
 
-if not os.path.exists(vocab_dir):  # 如果不存在词汇表，重建
+if not os.path.exists(vocab_dir):
+    # 构建词典表
     build_vocab(train_dir, vocab_dir)
 
 categories, cat_to_id = read_category()
