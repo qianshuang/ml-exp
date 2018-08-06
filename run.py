@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sklearn import neighbors
+from sklearn import neighbors, tree
 from sklearn import metrics
 from data.cnews_loader import *
 
@@ -49,7 +49,9 @@ categories, cat_to_id = read_category()
 words, word_to_id = read_vocab(vocab_dir)
 
 # kNN
-model = neighbors.KNeighborsClassifier()
+# model = neighbors.KNeighborsClassifier()
+# decision tree
+model = tree.DecisionTreeClassifier()
 
 train()
 test()
