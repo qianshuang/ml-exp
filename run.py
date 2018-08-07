@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sklearn import neighbors, tree
+from sklearn import neighbors, tree, ensemble
 from sklearn import metrics
 from data.cnews_loader import *
 
@@ -51,7 +51,9 @@ words, word_to_id = read_vocab(vocab_dir)
 # kNN
 # model = neighbors.KNeighborsClassifier()
 # decision tree
-model = tree.DecisionTreeClassifier()
+# model = tree.DecisionTreeClassifier()
+# random forest
+model = ensemble.RandomForestClassifier(n_estimators=10)    # n_estimators为基决策树的数量，一般越大效果越好直至趋于收敛
 
 train()
 test()
