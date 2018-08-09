@@ -124,4 +124,4 @@ def process_file(filename, word_to_id, cat_to_id):
         for k, v in counter.items():
             data[i][k] = v
         label.append(cat_to_id[labels[i]])
-    return data, label
+    return np.array(data), np.array(label)

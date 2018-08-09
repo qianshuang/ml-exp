@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from sklearn import neighbors, tree, ensemble
+import xgboost
 from sklearn import metrics
 from data.cnews_loader import *
 
@@ -53,11 +54,13 @@ words, word_to_id = read_vocab(vocab_dir)
 # decision tree
 # model = tree.DecisionTreeClassifier()
 # random forest
-# model = ensemble.RandomForestClassifier(n_estimators=100)  # n_estimators为基决策树的数量，一般越大效果越好直至趋于收敛
+# model = ensemble.RandomForestClassifier(n_estimators=10)  # n_estimators为基决策树的数量，一般越大效果越好直至趋于收敛
 # AdaBoost
 # model = ensemble.AdaBoostClassifier(learning_rate=1.0)  # learning_rate的作用是收缩基学习器的权重贡献值
 # GBDT
-model = ensemble.GradientBoostingClassifier(n_estimators=10)
+# model = ensemble.GradientBoostingClassifier(n_estimators=10)
+# xgboost
+model = xgboost.XGBClassifier(n_estimators=10)
 
 train()
 test()
