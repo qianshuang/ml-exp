@@ -14,7 +14,8 @@ vocab_dir = os.path.join(base_dir, 'cnews.vocab.txt')
 def train():
     print("start training...")
     # 处理训练数据
-    train_feature, train_target = process_file(train_dir, word_to_id, cat_to_id)
+    # train_feature, train_target = process_file(train_dir, word_to_id, cat_to_id)  # 词频特征
+    train_feature, train_target = process_tfidf_file(train_dir, word_to_id, cat_to_id)  # TF-IDF特征
     # 模型训练
     model.fit(train_feature, train_target)
 

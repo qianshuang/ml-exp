@@ -4,6 +4,8 @@ from collections import Counter
 import numpy as np
 import os
 
+from sklearn.feature_extraction.text import TfidfTransformer
+
 base_dir = 'data'
 stopwords_dir = os.path.join(base_dir, 'stop_words.txt')
 train_dir = os.path.join(base_dir + '/cnews', 'cnews.train.txt')
@@ -125,3 +127,9 @@ def process_file(filename, word_to_id, cat_to_id):
             data[i][k] = v
         label.append(cat_to_id[labels[i]])
     return np.array(data), np.array(label)
+
+
+def process_tfidf_file(filename, word_to_id, cat_to_id):
+    data, label = process_file(filename, word_to_id, cat_to_id)
+    data_tfidf = TfidfTransformer().fit_transform(data)
+    return data_tfidf, label
