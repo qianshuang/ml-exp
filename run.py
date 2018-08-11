@@ -65,7 +65,8 @@ words, word_to_id = read_vocab(vocab_dir)
 # Naive Bayes
 # model = naive_bayes.MultinomialNB()
 # logistic regression
-model = linear_model.LogisticRegression()
+model = linear_model.LogisticRegression()   # ovr
+model = linear_model.LogisticRegression(multi_class="multinomial", solver="lbfgs")  # softmax回归
 
 train()
 test()
