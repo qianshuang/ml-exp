@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sklearn import neighbors, tree, ensemble, naive_bayes
+from sklearn import neighbors, tree, ensemble, naive_bayes, linear_model
 import xgboost
 from sklearn import metrics
 from data.cnews_loader import *
@@ -63,7 +63,9 @@ words, word_to_id = read_vocab(vocab_dir)
 # xgboost
 # model = xgboost.XGBClassifier(n_estimators=10)
 # Naive Bayes
-model = naive_bayes.MultinomialNB()
+# model = naive_bayes.MultinomialNB()
+# logistic regression
+model = linear_model.LogisticRegression()
 
 train()
 test()
