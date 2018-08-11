@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sklearn import neighbors, tree, ensemble
+from sklearn import neighbors, tree, ensemble, naive_bayes
 import xgboost
 from sklearn import metrics
 from data.cnews_loader import *
@@ -60,7 +60,9 @@ words, word_to_id = read_vocab(vocab_dir)
 # GBDT
 # model = ensemble.GradientBoostingClassifier(n_estimators=10)
 # xgboost
-model = xgboost.XGBClassifier(n_estimators=10)
+# model = xgboost.XGBClassifier(n_estimators=10)
+# Naive Bayes
+model = naive_bayes.MultinomialNB()
 
 train()
 test()
