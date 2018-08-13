@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sklearn import neighbors, tree, ensemble, naive_bayes, linear_model
+from sklearn import neighbors, tree, ensemble, naive_bayes, linear_model, svm
 import xgboost
 from sklearn import metrics
 from data.cnews_loader import *
@@ -14,8 +14,8 @@ vocab_dir = os.path.join(base_dir, 'cnews.vocab.txt')
 def train():
     print("start training...")
     # 处理训练数据
-    # train_feature, train_target = process_file(train_dir, word_to_id, cat_to_id)  # 词频特征
-    train_feature, train_target = process_tfidf_file(train_dir, word_to_id, cat_to_id)  # TF-IDF特征
+    train_feature, train_target = process_file(train_dir, word_to_id, cat_to_id)  # 词频特征
+    # train_feature, train_target = process_tfidf_file(train_dir, word_to_id, cat_to_id)  # TF-IDF特征
     # 模型训练
     model.fit(train_feature, train_target)
 
@@ -24,6 +24,7 @@ def test():
     print("start testing...")
     # 处理测试数据
     test_feature, test_target = process_file(test_dir, word_to_id, cat_to_id)
+    # test_feature, test_target = process_tfidf_file(test_dir, word_to_id, cat_to_id)  # 不能直接这样处理，应该取训练集的TF-IDF值
     # test_predict = model.predict(test_feature)  # 返回预测类别
     test_predict_proba = model.predict_proba(test_feature)    # 返回属于各个类别的概率
     test_predict = np.argmax(test_predict_proba, 1)  # 返回概率最大的类别标签
@@ -65,8 +66,12 @@ words, word_to_id = read_vocab(vocab_dir)
 # Naive Bayes
 # model = naive_bayes.MultinomialNB()
 # logistic regression
-model = linear_model.LogisticRegression()   # ovr
-model = linear_model.LogisticRegression(multi_class="multinomial", solver="lbfgs")  # softmax回归
+# model = linear_model.LogisticRegression()   # ovr
+# model = linear_model.LogisticRegression(multi_class="multinomial", solver="lbfgs")  # softmax回归
+# SVM
+model = svm.LinearSVC()  # 线性，无概率结果
+model = svm.SVC(probability=True)  # 核函数，训练慢
+
 
 train()
 test()
