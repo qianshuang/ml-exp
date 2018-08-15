@@ -133,3 +133,20 @@ def process_tfidf_file(filename, word_to_id, cat_to_id):
     data, label = process_file(filename, word_to_id, cat_to_id)
     data_tfidf = TfidfTransformer().fit_transform(data)
     return data_tfidf, label
+
+
+def process_maxent_file(filename, word_to_id, cat_to_id):
+    data = []
+    contents, labels = read_file(filename)
+
+    for i in range(len(contents)):
+        words = list(contents[i].strip())
+        words = remove_stopwords(words)
+        dd = [word_to_id[x] for x in words if x in word_to_id]
+        counter = Counter(dd)
+        wordid_freq = {}
+        for k, v in counter.items():
+            wordid_freq[k] = v / float(len(dd))
+
+        data.append((wordid_freq, cat_to_id[labels[i]]))
+    return data

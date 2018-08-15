@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import json
 
+import nltk
 from sklearn import neighbors, tree, ensemble, naive_bayes, linear_model, svm
 import xgboost
 from sklearn import metrics
@@ -14,20 +16,33 @@ vocab_dir = os.path.join(base_dir, 'cnews.vocab.txt')
 def train():
     print("start training...")
     # 处理训练数据
-    train_feature, train_target = process_file(train_dir, word_to_id, cat_to_id)  # 词频特征
+    # train_feature, train_target = process_file(train_dir, word_to_id, cat_to_id)  # 词频特征
+    train_data = process_maxent_file(train_dir, word_to_id, cat_to_id)  # 最大熵词频特征
     # train_feature, train_target = process_tfidf_file(train_dir, word_to_id, cat_to_id)  # TF-IDF特征
     # 模型训练
-    model.fit(train_feature, train_target)
+    # model.fit(train_feature, train_target)
+    model.train(train_data)
 
 
 def test():
     print("start testing...")
     # 处理测试数据
-    test_feature, test_target = process_file(test_dir, word_to_id, cat_to_id)
-    # test_feature, test_target = process_tfidf_file(test_dir, word_to_id, cat_to_id)  # 不能直接这样处理，应该取训练集的TF-IDF值
+    # test_feature, test_target = process_file(test_dir, word_to_id, cat_to_id)
+    test_data = process_maxent_file(test_dir, word_to_id, cat_to_id)  # 最大熵词频特征
+    # test_feature, test_target = process_tfidf_file(test_dir, word_to_id, cat_to_id)  # 不能直接这样处理，应该取训练集的IDF值
     # test_predict = model.predict(test_feature)  # 返回预测类别
-    test_predict_proba = model.predict_proba(test_feature)    # 返回属于各个类别的概率
-    test_predict = np.argmax(test_predict_proba, 1)  # 返回概率最大的类别标签
+    # test_predict_proba = model.predict_proba(test_feature)    # 返回属于各个类别的概率
+    # test_predict = np.argmax(test_predict_proba, 1)  # 返回概率最大的类别标签
+
+    # MaxEnt测试
+    wordid_freq_jsons = []
+    test_target = []
+    for i in range(len(test_data)):
+        wordid_freq, label_id = test_data[i]
+        test_target.append(label_id)
+        wordid_freq_jsons.append(json.dumps(wordid_freq))
+
+    test_predict = model.prob_classify_many(wordid_freq_jsons)
 
     # accuracy
     true_false = (test_predict == test_target)
@@ -69,8 +84,10 @@ words, word_to_id = read_vocab(vocab_dir)
 # model = linear_model.LogisticRegression()   # ovr
 # model = linear_model.LogisticRegression(multi_class="multinomial", solver="lbfgs")  # softmax回归
 # SVM
-model = svm.LinearSVC()  # 线性，无概率结果
-model = svm.SVC(probability=True)  # 核函数，训练慢
+# model = svm.LinearSVC()  # 线性，无概率结果
+# model = svm.SVC(probability=True)  # 核函数，训练慢
+# MaxEnt
+model = nltk.classify.MaxentClassifier
 
 
 train()
