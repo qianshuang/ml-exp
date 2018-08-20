@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import json
 
-from sklearn import neighbors, tree, ensemble, naive_bayes, linear_model, svm
-import xgboost
-from sklearn import metrics
+from sklearn import metrics, svm
+
 from data.cnews_loader import *
 
 base_dir = 'data/cnews'
@@ -49,7 +47,7 @@ if not os.path.exists(vocab_dir):
     # 构建词典表
     build_vocab(train_dir, vocab_dir)
 
-categories, cat_to_id = read_category()
+categories, cat_to_id = read_category(test_dir)
 words, word_to_id = read_vocab(vocab_dir)
 
 # kNN
@@ -70,9 +68,8 @@ words, word_to_id = read_vocab(vocab_dir)
 # model = linear_model.LogisticRegression()   # ovr
 # model = linear_model.LogisticRegression(multi_class="multinomial", solver="lbfgs")  # softmax回归
 # SVM
-# model = svm.LinearSVC()  # 线性，无概率结果
-model = svm.SVC()  # 核函数，训练慢
-
+model = svm.LinearSVC()  # 线性，无概率结果
+# model = svm.SVC()  # 核函数，训练慢
 
 train()
 test()

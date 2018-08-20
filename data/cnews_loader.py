@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import re
 from collections import Counter
 import numpy as np
 import os
@@ -8,9 +8,6 @@ from sklearn.feature_extraction.text import TfidfTransformer
 
 base_dir = 'data'
 stopwords_dir = os.path.join(base_dir, 'stop_words.txt')
-train_dir = os.path.join(base_dir + '/cnews', 'cnews.train.txt')
-test_dir = os.path.join(base_dir + '/cnews', 'cnews.test.txt')
-ori_dir = os.path.join(base_dir + '/cnews', 'cnews.corpus.txt')
 
 
 def open_file(filename, mode='r'):
@@ -67,6 +64,12 @@ def build_vocab(total_dir, vocab_dir):
     open_file(vocab_dir, mode='w').write('\n'.join(words) + '\n')
 
 
+def number_norm(x):
+    re_num = re.compile(r'\d')
+    if re_num.match(x):
+        return 'NUM'
+
+
 def read_vocab(vocab_dir):
     """读取词汇表"""
     print("read_vocab...")
@@ -76,12 +79,12 @@ def read_vocab(vocab_dir):
     return words, word_to_id
 
 
-def read_category():
+def read_category(cat_dir):
     """读取所有类别"""
     print("read_category...")
     # categories = ['体育', '财经', '房产', '家居', '教育', '科技', '时尚', '时政', '游戏', '娱乐']
     cat_set = set()
-    with open_file(test_dir) as f:
+    with open_file(cat_dir) as f:
         for line in f:
             cat_set.add(line.split("\t")[0].strip())
     categories = list(cat_set)
@@ -127,6 +130,75 @@ def process_file(filename, word_to_id, cat_to_id):
             data[i][k] = v
         label.append(cat_to_id[labels[i]])
     return np.array(data), np.array(label)
+
+
+def word2features(words, i):
+    # TODO 还可以取词的ngram特征
+
+    word = words[i]
+
+    features = {
+        'bias': 1.0,
+        'word.lower()': word.lower(),  # 当前词
+        # 'word[-3:]': word[-3:],
+        # 'word[-2:]': word[-2:],
+        # 'word.isupper()': word.isupper(),
+        # 'word.istitle()': word.istitle(),
+        'word.isdigit()': word.isdigit(),
+        # 'postag': postag,
+        # 'postag[:2]': postag[:2],
+    }
+    if i > 0:
+        word1 = words[i-1]
+        features.update({
+            '-1:word.lower()': word1.lower(),  # 当前词的前一个词
+            # '-1:word.istitle()': word1.istitle(),
+            # '-1:word.isupper()': word1.isupper(),
+            # '-1:postag': postag1,
+            # '-1:postag[:2]': postag1[:2],
+        })
+    else:
+        features['BOS'] = True
+
+    if i < len(words)-1:
+        word1 = words[i+1]
+        features.update({
+            '+1:word.lower()': word1.lower(),  # 当前词的后一个词
+            # '+1:word.istitle()': word1.istitle(),
+            # '+1:word.isupper()': word1.isupper(),
+            # '+1:postag': postag1,
+            # '+1:postag[:2]': postag1[:2],
+        })
+    else:
+        features['EOS'] = True
+
+    return features
+
+
+def process_crf_file(crf_train_source_dir, crf_train_target_dir):
+    features = []
+    labels = []
+    with open_file(crf_train_source_dir) as f:
+        for line in f:
+            feature = []
+            words = re.split('\s+', line.strip())
+            for i in range(len(words)):
+                feature.append(word2features(words, i))
+            features.append(feature)
+
+    with open_file(crf_train_target_dir) as f:
+        for line in f:
+            label = []
+            ls = re.split('\s+', line.strip())
+            for i in range(len(ls)):
+                label.append(ls[i])
+            labels.append(label)
+
+    # for i in range(len(features)):
+    #     if len(features[i]) != len(labels[i]):
+    #         print("The numbers of items and labels differ, line " + str(i))
+
+    return np.array(features), np.array(labels)
 
 
 def process_tfidf_file(filename, word_to_id, cat_to_id):
