@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sklearn import metrics, svm
+from sklearn import metrics, svm, neural_network
 
 from data.cnews_loader import *
 
@@ -68,8 +68,10 @@ words, word_to_id = read_vocab(vocab_dir)
 # model = linear_model.LogisticRegression()   # ovr
 # model = linear_model.LogisticRegression(multi_class="multinomial", solver="lbfgs")  # softmax回归
 # SVM
-model = svm.LinearSVC()  # 线性，无概率结果
+# model = svm.LinearSVC()  # 线性，无概率结果
 # model = svm.SVC()  # 核函数，训练慢
+# MLP
+model = neural_network.MLPClassifier(max_iter=200, verbose=True, early_stopping=True)  # 注意max_iter是epoch数
 
 train()
 test()
