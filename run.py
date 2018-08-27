@@ -71,7 +71,7 @@ words, word_to_id = read_vocab(vocab_dir)
 # model = svm.LinearSVC()  # 线性，无概率结果
 # model = svm.SVC()  # 核函数，训练慢
 # MLP
-model = neural_network.MLPClassifier(max_iter=200, verbose=True, early_stopping=True)  # 注意max_iter是epoch数
+model = neural_network.MLPClassifier(hidden_layer_sizes=(512, 128), max_iter=200, verbose=True, early_stopping=True)  # 注意max_iter是epoch数
 
 train()
 test()
