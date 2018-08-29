@@ -222,3 +222,21 @@ def process_maxent_file(filename, word_to_id, cat_to_id):
 
         data.append((wordid_freq, cat_to_id[labels[i]]))
     return data
+
+
+def process_fasttext_file(file_dir, is_train):
+    if is_train:
+        file_path = os.path.join('data/cnews', 'fasttext.train.txt')
+    else:
+        file_path = os.path.join('data/cnews', 'fasttext.test.txt')
+    fasttext_file = open_file(file_path, mode='w')
+
+    with open_file(file_dir) as f:
+        for line in f:
+            # outline = " ".join(words_final)
+            label, content = line.strip().split('\t')
+            outline = " ".join(list(content)) + "\t__label__" + label + "\n"
+            fasttext_file.write(outline)
+            fasttext_file.flush()
+    fasttext_file.close()
+    return file_path

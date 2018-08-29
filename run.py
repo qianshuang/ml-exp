@@ -12,7 +12,7 @@ vocab_dir = os.path.join(base_dir, 'cnews.vocab.txt')
 
 def train():
     print("start training...")
-    # 处理训练数据
+    # 处理训练数据，如果矩阵过大，可以采用Python scipy库中对稀疏矩阵的优化算法：scipy.sparse.csr_matrix((dd, (row, col)), )
     train_feature, train_target = process_file(train_dir, word_to_id, cat_to_id)  # 词频特征
     # train_feature, train_target = process_tfidf_file(train_dir, word_to_id, cat_to_id)  # TF-IDF特征
     # 模型训练
